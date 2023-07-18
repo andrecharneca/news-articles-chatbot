@@ -1,55 +1,98 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>News Chatbot</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <title>News Articles QA</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </head>
-
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <div class="titlebox">
+        <h1>NewsGPT</h1>
+        <p>A ChatGPT based retrieval-augmented QA system</p>
+    </div>    <div class="textbox">
+        <p>
+            This is an enhanced version of ChatGPT with access to a bank of news articles. It retrieves passages from 
+            the articles and uses them to answer questions or perform tasks.
+            <br>
+            The querying system is based on <a href='https://github.com/jerryjliu/llama_index' target='_blank'>llama_index</a> and the app is written in Python using Flask.
+            <br>
+            The repository for this project can be found <a href='https://github.com/andrecharneca/news-articles-chatbot'target='_blank'>here</a>.
+        </p>
+    </div>
     <div class="container">
-        <h1>News Chatbot</h1>
-        <div id="chatbox">
-            <div class="botText"><span>Hi! Ask me questions about companies and technologies. </span></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask a question...">
+            <button id="submit-button">Submit</button>
         </div>
-        <div id="userInput">
-            <form>
-                <input id="textInput" type="text" name="user_input" placeholder="Message" class="form-control">
-                <button type="submit" id="buttonInput" class="btn btn-warning">Send</button>
-            </form>
+        <div id="response-container">
+            <div id="response"></div>
         </div>
     </div>
 
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/charneca/" target="_blank" class="logo-link">
+                    <img src="https://cdn.icon-icons.com/icons2/2201/PNG/512/linkedin_logo_square_icon_134016.png" alt="LinkedIn Logo" width="30" height="30">
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://github.com/andrecharneca" target="_blank" class="logo-link">
+                    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub Logo" width="30" height="30">
+                    <span>GitHub</span>
+                </a>
+            </div>
+            <div class="footer-info" style="text-align: right;">
+                <span>André Charneca</span>
+                <br>
+                <span>Cyber-Defence Campus</span>
+                <br>
+                <span>2023</span>
+            </div>
+        </div>
+    </footer>
+
+
     <script>
         $(document).ready(function() {
-            $("form").on("submit", function(event) {
-                var rawText = $("#textInput").val();
-                var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
-                $("#textInput").val("");
-                $("#chatbox").append(userHtml);
-                document.getElementById("userInput").scrollIntoView({
-                    block: "start",
-                    behavior: "smooth",
-                });
+            $("#submit-button").on("click", function() {
+                var user_input = $("#user-input").val();
+
                 $.ajax({
-                    data: {
-                        user_input: rawText,
-                    },
                     type: "POST",
                     url: "/get_response",
-                }).done(function(data) {
-                    var botHtml = '<p class="botText"><span>' + data.bot_response + "</span></p>";
-                    $("#chatbox").append($.parseHTML(botHtml));
-                    document.getElementById("userInput").scrollIntoView({
-                        block: "start",
-                        behavior: "smooth",
-                    });
+                    data: { user_input: user_input },
+                    beforeSend: function() {
+                        showProcessingText();
+                    },
+                    success: function(response) {
+                        var bot_response = response;
+                        var formatted_response = marked.parse(bot_response);
+                        displayResponse(formatted_response);
+                    },
+
                 });
-                event.preventDefault();
             });
+
+            function showProcessingText() {
+                $("#response").text("Processing...");
+            }
+            function displayResponse(response) {
+                $("#response").html(response);
+            }
         });
+
+        function showLoadingIcon() {
+            $("#response").html('<i class="fas fa-spinner fa-spin"></i>');
+        }
+
+        function hideLoadingIcon() {
+            $("#response").find('.fa-spinner').remove();
+        }
+
+        function displayResponse(response) {
+            $("#response").html(response);
+        }
     </script>
 </body>
-
 </html>

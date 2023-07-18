@@ -10,10 +10,10 @@ from llama_index.llms import OpenAI
 from llama_index.callbacks.schema import CBEventType, EventPayload
 from .build_llama_index import INDEX_PATH
 
-# import logging
-# import sys
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-# logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
+import logging
+import sys
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
 
 def setup_query_engine():
     chatgpt = OpenAI(model="gpt-3.5-turbo", temperature=0.0)
@@ -26,52 +26,32 @@ def setup_query_engine():
     query_engine = index.as_query_engine(
         similarity_top_k=4,
         text_qa_template=TEXT_QA_TEMPLATE,
+        refine_template = REFINE_TEMPLATE,
     )
     return query_engine
 
-def get_bot_response(query_engine, user_input):
+def process_article_links(response)->str:
+    article_links = ""
+    urls = set([node.node.metadata["url"] for node in response.source_nodes])
+    for url in urls:
+        # get title
+        title = [node.node.metadata["title"] for node in response.source_nodes if node.node.metadata["url"] == url][0]
+        article_links += f"""<details><summary><a href='{url}' target='_blank'> {title} </a></summary>\n\n"""
+        for node in response.source_nodes:
+            if node.node.metadata["url"] == url:
+                article_links += f"""*{node.node.text}*\n\n"""
+        article_links += "</details>\n\n"
+
+    # for node in response.source_nodes:
+    #     if node.node.metadata["url"] not in urls:
+    #         article_links += f"""<details><summary><a href='{node.node.metadata["url"]}' target='_blank'> {node.node.metadata["title"]} </a></summary>\n\n"""
+    return article_links
+
+def get_bot_response(query_engine, user_input)->str:
     # Process the user input and generate a response from the chatbot
+    output = "**Related articles:**\n\n{article_links}\n**Answer:**\n\n{answer}"
+    response = query_engine.query(user_input)
+    article_links = process_article_links(response)
+    output = output.format(article_links=article_links, answer=response.response)
     
-    # Using the LlamaDebugHandler to print the trace of the sub questions
-    # captured by the SUB_QUESTION callback event type
-    ## Setup Subquestion Engine ##
-    query_engine_tools = [
-        QueryEngineTool(
-            query_engine=query_engine,
-            metadata=ToolMetadata(
-                name="news_articles", description="News articles from the web about companies"
-            ),
-        )
-    ]
-    llama_debug = LlamaDebugHandler(print_trace_on_end=True)
-    callback_manager = CallbackManager([llama_debug])
-    service_context = ServiceContext.from_defaults(callback_manager=callback_manager)
-    query_engine = SubQuestionQueryEngine.from_defaults(
-        query_engine_tools=query_engine_tools,
-        service_context=service_context,
-    )
-    response = query_engine.query(
-        user_input,
-    )
-
-    # Create an empty list to store the sub questions and answers
-    sub_questions_and_answers = []
-
-    # Iterate through the sub questions and answers captured by the SubQuestionQueryEngine
-    for start_event, end_event in llama_debug.get_event_pairs(CBEventType.SUB_QUESTIONS):
-        for i, qa_pair in enumerate(end_event.payload[EventPayload.SUB_QUESTIONS]):
-            sub_questions_and_answers.append(
-                {
-                    "sub_question": qa_pair.sub_q.sub_question.strip(),
-                    "answer": qa_pair.answer.strip(),
-                }
-            )
-    return prepare_bot_output(response, sub_questions_and_answers)
-
-def prepare_bot_output(response, sub_questions_and_answers):
-    # Prepare the response from the chatbot to be displayed in the frontend
-    output = ""
-    for qa in sub_questions_and_answers:
-        output += f"**Q:** {qa['sub_question']}  \n**A:** {qa['answer']}  \n"
-    output += f"**Final Response:** {response.response}" 
-    return output      
+    return output

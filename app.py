@@ -14,7 +14,7 @@ def get_response():
     user_input = request.form['user_input']
     # Process the user input and generate a response from the chatbot
     response = get_bot_response(QUERY_ENGINE, user_input)
-    return {'bot_response': response}
+    return response
 
 
 if __name__ == '__main__':
