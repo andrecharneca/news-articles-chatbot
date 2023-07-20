@@ -7,16 +7,20 @@ from llama_index.prompts import Prompt
 
 CHAT_TEXT_QA_MSGS = [
     SystemMessagePromptTemplate.from_template(
-        "You are a scientific language model. You always answer based on your interpretation of provided information. If the context is not helpful, you notify the user but still try to answer based on your own knowledge."
+        "You are a scientific language model, and you provide the source link for each sentence you output. "
+        "If the context is not helpful, you notify the user but still try to answer based on your own knowledge. "
     ),
     HumanMessagePromptTemplate.from_template(
-        "Passages from news articles below. Use them as context.\n"
+        "I am a tech analyst and I'm going to ask you questions about companies and technologies, "
+        "while giving you some relevant information from news articles. The passages from news articles are below:\n"
         "---------------------\n"
         "{context_str}\n"
-        "---------------------\n"
-        "Given the context information "
-        "answer the question concisely and to the point. Backup all your claims with a link to the source "
-        "with this exact format <a href='www.link_to_source.com' target='_blank'>[link]</a>: {query_str}\n"
+        "Answer the question given the context above. If the context does not contain the "
+        "direct answer to the question, think step by step and reach conclusions yourself. "
+        "Always include the sources at the end of each of your sentences, "
+        "with this exact format <a href='www.link_to_source.com' target='_blank'>[news outlet]</a>. Keep the target='_blank' "
+        "so the links open in a new window. "
+        "\nQuestion: {query_str}\n"
     ),
 ]
 CHAT_TEXT_QA_MSGS_LC = ChatPromptTemplate.from_messages(CHAT_TEXT_QA_MSGS)

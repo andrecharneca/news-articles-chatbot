@@ -12,7 +12,7 @@
         <p>A ChatGPT based retrieval-augmented QA system</p>
     </div>    <div class="textbox">
         <p>
-            This is an enhanced version of ChatGPT with access to a bank of news articles. It retrieves passages from 
+            This is an enhanced version of ChatGPT with access to a bank of around 100 news articles from 2023. It retrieves passages from 
             the articles and uses them to answer questions or perform tasks.
             <br>
             The querying system is based on <a href='https://github.com/jerryjliu/llama_index' target='_blank'>llama_index</a> and the app is written in Python using Flask.
@@ -81,14 +81,6 @@
                 $("#response").html(response);
             }
         });
-
-        function showLoadingIcon() {
-            $("#response").html('<i class="fas fa-spinner fa-spin"></i>');
-        }
-
-        function hideLoadingIcon() {
-            $("#response").find('.fa-spinner').remove();
-        }
 
         function displayResponse(response) {
             $("#response").html(response);
