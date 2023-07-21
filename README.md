@@ -7,9 +7,10 @@ The NewsGPT is an enhanced version of ChatGPT with access to a bank of news arti
 To get started with the NewsGPT, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/andrecharneca/news-articles-chatbot.git`
-2. Install the required dependencies: `pip install -r requirements.txt`
-3. Run the Flask app: `python app.py`
-4. Open your web browser and navigate to `http://localhost:5000/` to use the chatbot.
+2. Enter the folder: `cd news-articles-chatbot`
+3. Install the required dependencies: `pip install -r requirements.txt`
+4. Run the Flask app: `python app.py`
+5. Open your web browser and navigate to `http://localhost:5000/` to use the chatbot.
 
 ## Usage
 
