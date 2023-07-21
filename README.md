@@ -9,8 +9,10 @@ To get started with the NewsGPT, follow these steps:
 1. Clone the repository: `git clone https://github.com/andrecharneca/news-articles-chatbot.git`
 2. Enter the folder: `cd news-articles-chatbot`
 3. Install the required dependencies: `pip install -r requirements.txt`
-4. Run the Flask app: `python app.py`
-5. Open your web browser and navigate to `http://localhost:5000/` to use the chatbot.
+4. Setup your OpenAI API key: `conda env config vars set OPENAI_API_KEY=[key]`
+5. Deactivate and activate the env, so the key takes effect.
+6. Run the Flask app: `python app.py`
+7. Open your web browser and navigate to `http://127.0.0.1:5000` to use the chatbot.
 
 ## Usage
 
@@ -27,5 +29,4 @@ To get started with the NewsGPT, follow these steps:
 - [llama-index](https://github.com/jerryjliu/llama_index) (querying system)
 
 ## Practical Info
- - The bot uses the `OPENAI_API_KEY` environment variable on your machine to query ChatGPT.
- - If after some time using it you come across an error in Chrome saying "You don't have authorization to visit this page", close and reopen Chrome.
+ - If after some time using it you come across an error in Chrome saying "You don't have authorisation to visit this page", close and reopen Chrome.
