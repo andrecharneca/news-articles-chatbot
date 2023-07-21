@@ -17,6 +17,8 @@ To get started with the NewsGPT, follow these steps:
 2. Click the "Submit" button.
 3. The system will process the question and display the response on the right side.
 
+<img src="data/images/newsgpt.gif" alt="Alt Text" width="900">
+
 ## Resources Used
 
 - Flask
