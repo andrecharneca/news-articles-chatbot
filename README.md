@@ -24,3 +24,7 @@ To get started with the NewsGPT, follow these steps:
 - Flask
 - [Newspaper3k](https://newspaper.readthedocs.io/en/latest/) (for extracting news articles)
 - [llama-index](https://github.com/jerryjliu/llama_index) (querying system)
+
+## Practical Info
+ - The bot uses the `OPENAI_API_KEY` environment variable on your machine to query ChatGPT.
+ - If after some time using it you come across an error in Chrome saying "You don't have authorization to visit this page", close and reopen Chrome.
